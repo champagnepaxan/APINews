@@ -7,18 +7,18 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class NewsItemReadSchema(BaseModel):
+class NewsItemRead(BaseModel):
     title: str
     content: str | None = None
     images: list[str | None]
     created: datetime
     updated: datetime
-    category: str | None = None
+    category_id: int | None = None
 
     class Config:
         from_attributes = True 
 
-class NewsReadSchema(BaseModel):
+class NewsRead(BaseModel):
     id: int
     title: str
     created: datetime
@@ -27,14 +27,15 @@ class NewsReadSchema(BaseModel):
          from_attributes = True 
 
 
-class NewsCreateSchema(BaseModel):
+class NewsCreate(BaseModel):
+    
     title: str
-    content: str | None = None
+    content: str| None = None
     images: list[str | None]
-    category: str | None = None
+    category_id: int | None = None
 
 
-class CategoryReadSchema(BaseModel):
+class CategoryRead(BaseModel):
     """
     Category read schema
     """
@@ -46,7 +47,7 @@ class CategoryReadSchema(BaseModel):
          from_attributes = True 
 
 
-class CategoryCreateSchema(BaseModel):
+class CategoryCreate(BaseModel):
     """
     Category create schema
     """

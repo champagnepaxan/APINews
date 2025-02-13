@@ -4,10 +4,10 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
 from .models import Category, News
-from .schemas import (CategoryCreateSchema, 
-                      CategoryReadSchema,
-                      NewsCreateSchema,
-                      NewsReadSchema,NewsItemReadSchema,)
+from .schemas import (CategoryCreate, 
+                      CategoryRead,
+                      NewsCreate,
+                      NewsRead,NewsItemRead,)
 
 from src import session as async_session
 
@@ -22,7 +22,7 @@ news_router = APIRouter(
 )
 
 
-@news_router.get("", response_model=Sequence[NewsReadSchema])
+@news_router.get("", response_model=Sequence[NewsRead])
 async def get_news(offset: int = 0, limit: int = 10) -> Sequence[News]:
     """
     Get all news
@@ -34,7 +34,7 @@ async def get_news(offset: int = 0, limit: int = 10) -> Sequence[News]:
         return news
 
 
-@news_router.get("/{news_id}", response_model=NewsItemReadSchema)
+@news_router.get("/{news_id}", response_model=NewsItemRead)
 async def get_news_item(news_id: int) -> News:
     """
     Get news item by id
@@ -48,14 +48,22 @@ async def get_news_item(news_id: int) -> News:
         return news_item
 
 
-@news_router.post("", response_model=NewsItemReadSchema)
-async def create_news_item(news_item: NewsCreateSchema) -> News:
+@news_router.post("", response_model=NewsItemRead)
+async def create_news_item(news_item: NewsCreate) -> News:
     """
     Create news item
     """
     async with async_session() as session:
-        new_news_item = News(**news_item.dict())
+        query = select(Category).filter(Category.id==news_item.category_id)
+        result = await session.execute(query)
+        category = result.scalar_one_or_none()
+
+        if category is None:
+            raise HTTPException(status_code=404, detail="Category not found")
+
+        new_news_item = News(**news_item.dict(), category=category)
         session.add(new_news_item)
+        
         await session.commit()
         await session.refresh(new_news_item)
         return new_news_item
@@ -76,8 +84,8 @@ async def delete_news_item(news_id: int) -> None:
         await session.commit()
 
 
-@news_router.put("/{news_id}", response_model=NewsItemReadSchema)
-async def update_news_item(news_id: int, news_item: NewsCreateSchema) -> News:
+@news_router.put("/{news_id}", response_model=NewsItemRead)
+async def update_news_item(news_id: int, news_item: NewsCreate) -> News:
     """
     Update news item by id
     """
@@ -96,8 +104,8 @@ async def update_news_item(news_id: int, news_item: NewsCreateSchema) -> News:
         return old_news_item
 
 
-@news_router.patch("/{news_id}", response_model=NewsItemReadSchema)
-async def partial_update_news_item(news_id: int, news_item: NewsCreateSchema) -> News:
+@news_router.patch("/{news_id}", response_model=NewsItemRead)
+async def partial_update_news_item(news_id: int, news_item: NewsCreate) -> News:
     """
     Update news item by id
     """
@@ -118,7 +126,7 @@ async def partial_update_news_item(news_id: int, news_item: NewsCreateSchema) ->
 
 
 
-@category_router.get("", response_model=Sequence[CategoryReadSchema])
+@category_router.get("", response_model=Sequence[CategoryRead])
 async def get_categories(offset: int = 0, limit: int = 10) -> Sequence[Category]:
     """
     Get all categories
@@ -130,7 +138,7 @@ async def get_categories(offset: int = 0, limit: int = 10) -> Sequence[Category]
         return categories
 
 
-@category_router.get("/{category_id}", response_model=CategoryReadSchema)
+@category_router.get("/{category_id}", response_model=CategoryRead)
 async def get_category(category_id: int) -> Category:
     """
     Get category by id
@@ -144,8 +152,8 @@ async def get_category(category_id: int) -> Category:
         return category
 
 
-@category_router.post("", response_model=CategoryReadSchema)
-async def create_category(category: CategoryCreateSchema) -> Category:
+@category_router.post("", response_model=CategoryRead)
+async def create_category(category: CategoryCreate) -> Category:
     """
     Create category
     """
@@ -172,8 +180,8 @@ async def delete_category(category_id: int) -> None:
         await session.commit()
 
 
-@category_router.put("/{category_id}", response_model=CategoryReadSchema)
-async def update_category(category_id: int, category: CategoryCreateSchema) -> Category:
+@category_router.put("/{category_id}", response_model=CategoryRead)
+async def update_category(category_id: int, category: CategoryCreate) -> Category:
     """
     Update category by id
     """
@@ -192,8 +200,8 @@ async def update_category(category_id: int, category: CategoryCreateSchema) -> C
         return old_category
 
 
-@category_router.patch("/{category_id}", response_model=CategoryReadSchema)
-async def partial_update_category(category_id: int, category: CategoryCreateSchema) -> Category:
+@category_router.patch("/{category_id}", response_model=CategoryRead)
+async def partial_update_category(category_id: int, category: CategoryCreate) -> Category:
     """
     Update category by id
     """
