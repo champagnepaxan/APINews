@@ -1,3 +1,4 @@
+
+from .manager import DBManager
 from .database import *
 from .environs import *
-from .news import *

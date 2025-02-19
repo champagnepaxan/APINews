@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class NewsItemRead(BaseModel):
+class NewsReadItem(BaseModel):
     title: str
     content: str | None = None
     images: list[str | None]
