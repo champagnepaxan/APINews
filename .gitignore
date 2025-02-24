@@ -1,12 +1,12 @@
-# Игнорируем виртуальное окружение
+# Игнорируем окружение
 venv/
 .env
-*.env
 
-# Игнорируем зависимости (если используешь pipenv или poetry)
+# Игнорируем зависимости
 Pipfile
 Pipfile.lock
 poetry.lock
+pyproject.toml
 
 # Игнорируем кеши Python
 __pycache__/
@@ -34,18 +34,13 @@ htmlcov/
 .vscode/
 .idea/
 *.iml
+*.sublime-project
+*.sublime-workspace
 
-# Docker и контейнеры (если используешь)
-*.dockerfile
-docker-compose.yml
-.dockerignore
-
-# Сборочные файлы (если вдруг решишь собирать пакет)
-build/
-dist/
-*.egg-info/
-
-# Frontend (если вдруг будет)
-node_modules/
-
+# Alembic
 alembic/versions/*
+!alembic/versions/.gitkeep
+
+# Медия файлвы
+media/*
+!media/.gitkeep

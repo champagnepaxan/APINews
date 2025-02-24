@@ -1,4 +1,3 @@
-
-from .manager import DBManager
 from .database import *
 from .environs import *
+from .manager import DBManager

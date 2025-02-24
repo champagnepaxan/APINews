@@ -2,13 +2,9 @@
 Authentication config module
 """
 
-from fastapi_users.authentication import (
-    BearerTransport,
-    JWTStrategy,
-    AuthenticationBackend
-)
+from fastapi_users.authentication import BearerTransport, JWTStrategy, AuthenticationBackend
 
-from src import JWT_SECRET
+from src.environs import JWT_SECRET
 
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 

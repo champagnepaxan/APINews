@@ -8,7 +8,7 @@ from typing import Optional
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, UUIDIDMixin
 
-from src import USER_MANAGER_SECRET
+from src.environs import USER_MANAGER_SECRET
 from .models import User, get_user_db
 
 
